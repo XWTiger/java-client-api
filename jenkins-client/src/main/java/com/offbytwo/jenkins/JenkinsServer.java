@@ -8,15 +8,17 @@ package com.offbytwo.jenkins;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.bind.JAXBException;
 
+import com.offbytwo.jenkins.model.extension.Credential;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.entity.ContentType;
+import org.apache.http.message.BasicNameValuePair;
 import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +44,6 @@ import com.offbytwo.jenkins.model.QueueItem;
 import com.offbytwo.jenkins.model.QueueReference;
 import com.offbytwo.jenkins.model.View;
 import java.io.Closeable;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -992,4 +993,41 @@ public class JenkinsServer implements Closeable {
 		}
         return this;
 	}
+
+    /**
+     * json string like
+     * {
+     *   "credentials": {
+     *     "scope": "GLOBAL",
+     *     "username": "tirrrr5",
+     *     "password": "12345678",
+     *     "$redact": "password",
+     *     "id": "aaaa5",
+     *     "description": "aaaa5",
+     *     "stapler-class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl",
+     *     "$class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
+     *   }
+     * }
+     * @param param json string
+     * @return
+     */
+	public JenkinsServer addCredentials(String param) {
+        NameValuePair basicNameValuePair = new BasicNameValuePair("json", param);
+        List<NameValuePair> keyValue = new ArrayList<>();
+        keyValue.add(basicNameValuePair);
+        try {
+            HttpResponse response = client.post_form_with_result("/credentials/store/system/domain/_/createCredentials", keyValue, false);
+            if (302 == response.getStatusLine().getStatusCode()) {
+                LOGGER.info("========= success ========");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    public List<Credential> getCredentials() {
+
+	    return null;
+    }
 }

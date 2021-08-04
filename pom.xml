@@ -8,11 +8,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
+  <!--<parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>9</version>
-  </parent>
+  </parent>-->
+
+  <!--<parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>9</version>
+  </parent>-->
 
   <name>Jenkins API client for Java</name>
   <url>http://github.com/jenkinsci/java-client-api</url>
@@ -20,21 +26,40 @@
 
   <groupId>com.offbytwo.jenkins</groupId>
   <artifactId>jenkins-client-parent</artifactId>
-  <version>0.4.0-SNAPSHOT</version>
+  <version>0.4.0-sugon-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <scm>
+  <!--<scm>
     <connection>scm:git:https://github.com/jenkinsci/java-client-api.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/java-client-api.git</developerConnection>
     <url>https://github.com/jenkinsci/java-client-api</url>
     <tag>HEAD</tag>
+  </scm>-->
+  <scm>
+    <connection>scm:git:https://github.com/XWTiger/java-client-api.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:XWTiger/java-client-api.git</developerConnection>
+    <url>https://github.com/XWTiger/java-client-api</url>
+    <tag>HEAD</tag>
   </scm>
+
   <distributionManagement>
+    <repository>
+      <id>sugoncloud-releases</id>
+      <name>Sugoncloud Release Repository</name>
+      <url>http://172.22.5.34:9996/repository/sugoncloud-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>sugoncloud-snapshots</id>
+      <name>Sugoncloud Snapshot Repository</name>
+      <url>http://172.22.5.34:9996/repository/sugoncloud-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <!--<distributionManagement>
     <site>
       <id>github</id>
       <url>scm:git:ssh://git@github.com/jenkinsci/java-client-api.git</url>
     </site>
-  </distributionManagement>
+  </distributionManagement>-->
   <ciManagement>
     <system>Travis-CI</system>
     <url>https://travis-ci.org/jenkinsci/java-client-api/</url>
@@ -292,7 +317,7 @@
         <!--
           ! We define a newer version than in parent.
         -->
-        <plugin>
+       <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>1.6</version>
@@ -312,10 +337,10 @@
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.3</version>
           <configuration>
-            <!--
+            &lt;!&ndash;
               ! overwrite arguments of parent pom to
               ! prevent activating profile sonatype-oss-release
-            -->
+            &ndash;&gt;
             <arguments combine.self="override" />
             <goals>deploy site site:stage scm-publish:publish-scm</goals>
             <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -334,7 +359,7 @@
           <groupId>org.asciidoctor</groupId>
           <artifactId>asciidoctor-maven-plugin</artifactId>
           <version>${asciidoctor-maven-plugin.version}</version>
-        </plugin>
+        </plugin>-->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -457,8 +482,18 @@
 
   <repositories>
     <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
+      <id>sugoncloud-public</id>
+      <url>http://172.22.5.34:9996/repository/sugoncloud-public/</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
     </repository>
   </repositories>
 
