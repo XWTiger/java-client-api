@@ -12,7 +12,12 @@ import java.util.*;
 
 import javax.xml.bind.JAXBException;
 
-import com.offbytwo.jenkins.model.extension.Credential;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.offbytwo.jenkins.model.extension.CredentialDO;
+import com.offbytwo.jenkins.model.extension.CredentialVO;
+import com.offbytwo.jenkins.model.extension.HtmlAnalyzeUtils;
+import com.offbytwo.jenkins.model.extension.ManageFileDO;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -1008,26 +1013,111 @@ public class JenkinsServer implements Closeable {
      *     "$class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
      *   }
      * }
-     * @param param json string
+     * @param credentialDO json object
      * @return
      */
-	public JenkinsServer addCredentials(String param) {
+    public JenkinsServer addCredentials(CredentialDO credentialDO) throws Exception {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String creContent = objectMapper.writeValueAsString(credentialDO);
+        String param = "{\"credentials\": " + creContent + "}";
         NameValuePair basicNameValuePair = new BasicNameValuePair("json", param);
         List<NameValuePair> keyValue = new ArrayList<>();
         keyValue.add(basicNameValuePair);
-        try {
-            HttpResponse response = client.post_form_with_result("/credentials/store/system/domain/_/createCredentials", keyValue, false);
-            if (302 == response.getStatusLine().getStatusCode()) {
-                LOGGER.info("========= success ========");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        HttpResponse response = client.post_form_with_result("/credentials/store/system/domain/_/createCredentials", keyValue, false);
+        if (302 == response.getStatusLine().getStatusCode()) {
+            LOGGER.info("========= create success ========");
         }
         return this;
     }
 
-    public List<Credential> getCredentials() {
-
-	    return null;
+    public List<CredentialVO> getCredentials() {
+        try {
+           String result = client.get("/credentials/store/system/domain/_/");
+            return  HtmlAnalyzeUtils.parseCredentialHtml(result);
+        } catch (IOException e) {
+            LOGGER.error("get credentials list failed", e);
+        }
+        return null;
     }
+
+    /**
+     * {
+     *   "stapler-class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl",
+     *   "scope": "GLOBAL",
+     *   "username": "test-in-code",
+     *   "password": "1123",
+     *   "$redact": "password",
+     *   "id": "d5ebe3a7-d6b2-4d7b-88fc-5e462df49273",
+     *   "description": "aaaa7"
+     * }
+     * @param credentialDO
+     * @return
+     */
+    public JenkinsServer updateCredentials(CredentialDO credentialDO) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String param = objectMapper.writeValueAsString(credentialDO);
+        NameValuePair basicNameValuePair = new BasicNameValuePair("json", param);
+        List<NameValuePair> keyValue = new ArrayList<>();
+        keyValue.add(basicNameValuePair);
+
+        HttpResponse response = client.post_form_with_result("/credentials/store/system/domain/_/credential/" + credentialDO.getId() + "/updateSubmit", keyValue, false);
+        if (302 == response.getStatusLine().getStatusCode()) {
+            LOGGER.info("========= update success ========");
+        }
+
+        return this;
+    }
+
+    public void deleteCredentials(String id) {
+        try {
+            String result = client.get("/credentials/store/system/domain/_/credential/" + id + "/delete");
+        } catch (IOException e) {
+            LOGGER.error("delete credentials failed", e);
+        }
+    }
+
+    /**
+     * {
+     *   "config": {
+     *     "stapler-class": "org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig",
+     *     "id": "ea7961d7-3421-4693-ad2e-fca9f34f6507",
+     *     "providerId": "org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig",
+     *     "name": "MyGlobalSettings-tiger",
+     *     "comment": "Global settings",
+     *     "isReplaceAll": true,
+     *     "content": "{content}"
+     *   }
+     * }
+     * this method is also able to update.
+     * @param manageFileDO
+     * @return
+     */
+    public JenkinsServer addPluginManageFile(ManageFileDO manageFileDO) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String manageFile = objectMapper.writeValueAsString(manageFileDO);
+        String jsonFormData = "{ \"config\": " + manageFile + "}";
+        NameValuePair basicNameValuePair = new BasicNameValuePair("json", jsonFormData);
+        List<NameValuePair> keyValue = new ArrayList<>();
+        keyValue.add(basicNameValuePair);
+
+        HttpResponse response = client.post_form_with_result("/configfiles/saveConfig", keyValue, false);
+        if (302 == response.getStatusLine().getStatusCode()) {
+            LOGGER.info("=========add manage file success ========");
+        }
+        return this;
+    }
+
+    ///configfiles/removeConfig?id=ea7961d7-3421-4693-ad2e-fca9f34f6507
+    public void deletePluginManageFile(String id) {
+        try {
+            String result = client.get("/configfiles/removeConfig?id=" + id);
+        } catch (IOException e) {
+            LOGGER.error("delete  plugin file  failed", e);
+        }
+    }
+
+
+
 }

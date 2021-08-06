@@ -1,6 +1,9 @@
 package com.offbytwo.jenkins.model.extension;
 
-public class Credential {
+/**
+ * for view list
+ */
+public class CredentialVO {
     private String id;
     private String name;
     private String kind;
