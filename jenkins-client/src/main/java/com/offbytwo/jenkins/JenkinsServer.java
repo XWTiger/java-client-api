@@ -1118,6 +1118,25 @@ public class JenkinsServer implements Closeable {
         }
     }
 
+    /**
+     * ui request json value
+     * @param systemSettingsJson ui request json value
+     * @return
+     */
+    public JenkinsServer updateSystemSettings(String systemSettingsJson) throws IOException {
+        NameValuePair basicNameValuePair = new BasicNameValuePair("json", systemSettingsJson);
+        NameValuePair svnNameValuePair = new BasicNameValuePair("svn.workspaceFormat", "8");
+        List<NameValuePair> keyValue = new ArrayList<>();
+        keyValue.add(basicNameValuePair);
+        keyValue.add(svnNameValuePair);
+
+        HttpResponse response = client.post_form_with_result("/configSubmit", keyValue, false);
+        if (200 == response.getStatusLine().getStatusCode()) {
+            LOGGER.info("=========update system settings success ========");
+        }
+        return this;
+    }
+
 
 
 }
