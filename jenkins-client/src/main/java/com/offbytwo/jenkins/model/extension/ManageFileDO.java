@@ -1,6 +1,9 @@
 package com.offbytwo.jenkins.model.extension;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ManageFileDO {
+    @JsonProperty("stapler-class")
     private String staplerClass = "org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig";
     private String id;
     private String providerId = "org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig";
