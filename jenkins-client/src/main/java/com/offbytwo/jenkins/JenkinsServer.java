@@ -1114,7 +1114,7 @@ public class JenkinsServer implements Closeable {
         try {
             String result = client.get("/configfiles/removeConfig?id=" + id);
         } catch (IOException e) {
-            LOGGER.error("delete  plugin file  failed", e);
+            LOGGER.warn("direct error", e);
         }
     }
 
