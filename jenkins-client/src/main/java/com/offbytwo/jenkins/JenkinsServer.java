@@ -1072,7 +1072,13 @@ public class JenkinsServer implements Closeable {
 
     public void deleteCredentials(String id) {
         try {
-            String result = client.get("/credentials/store/system/domain/_/credential/" + id + "/delete");
+            NameValuePair basicNameValuePair = new BasicNameValuePair("json", "");
+            List<NameValuePair> keyValue = new ArrayList<>();
+            keyValue.add(basicNameValuePair);
+            HttpResponse result = client.post_form_with_result("/credentials/store/system/domain/_/credential/" + id + "/doDelete", keyValue, false);
+            if (302 == result.getStatusLine().getStatusCode()) {
+                LOGGER.info("========= delete credentials success ========");
+            }
         } catch (IOException e) {
             LOGGER.error("delete credentials failed", e);
         }
