@@ -18,6 +18,7 @@ import com.offbytwo.jenkins.model.extension.CredentialDO;
 import com.offbytwo.jenkins.model.extension.CredentialVO;
 import com.offbytwo.jenkins.model.extension.HtmlAnalyzeUtils;
 import com.offbytwo.jenkins.model.extension.ManageFileDO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -288,8 +289,6 @@ public class JenkinsServer implements Closeable {
     public JobWithDetails getJob(FolderJob folder, String jobName) throws IOException {
         try {
             JobWithDetails job = client.get(UrlUtils.toJobBaseUrl(folder, jobName), JobWithDetails.class);
-            job.setClient(client);
-
             return job;
         } catch (HttpResponseException e) {
             LOGGER.debug("getJob(folder={}, jobName={}) status={}", folder, jobName, e.getStatusCode());

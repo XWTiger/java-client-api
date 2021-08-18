@@ -190,6 +190,7 @@ public class JobWithDetails extends Job {
         if (from != null) {
             ret = new Build(from);
             ret.setClient(client);
+            ret.set_class(from.get_class());
         }
         return ret;
     }
@@ -449,7 +450,7 @@ public class JobWithDetails extends Job {
      *
      */
     public Optional<Build> getBuildByNumber(final int buildNumber) {
-        return builds.stream().filter(isBuildNumberEqualTo(buildNumber)).findFirst();
+        return builds.stream().filter(isBuildNumberEqualTo(buildNumber)).map(build -> buildWithClient(build)).findFirst();
     }
     
     /**

@@ -30,6 +30,10 @@ public class BaseModel {
     //TODO: We should make this private
     protected JenkinsHttpConnection client;
 
+    public void set_class(String _class) {
+        this._class = _class;
+    }
+
     
     /**
      * Get the HTTP client.

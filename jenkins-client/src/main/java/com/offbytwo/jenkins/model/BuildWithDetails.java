@@ -109,7 +109,8 @@ public class BuildWithDetails extends Build {
 
     };
 
-    private List<LinkedHashMap<String, List<LinkedHashMap<String, Object>>>> actions; // TODO: Should be improved.
+    //private List<LinkedHashMap<String, List<LinkedHashMap<String, Object>>>> actions; // TODO: Should be improved.
+    private List<LinkedHashMap<String, Object>> actions;
     private boolean building;
     private String description;
     private String displayName;
@@ -163,9 +164,10 @@ public class BuildWithDetails extends Build {
     public List<BuildCause> getCauses() {
         return actions.stream()
                 .filter(item -> item.containsKey("causes"))
-                .flatMap(item -> item.entrySet().stream())
-                .flatMap(sub -> sub.getValue().stream())
-                .map(item -> convertToBuildCause(item))
+               // .flatMap(item -> item.entrySet().stream())
+               // .flatMap(sub -> sub.getValue().stream())
+               // .map(item -> convertToBuildCause(item))
+                .map(stringStringLinkedHashMap -> convertToBuildCause(stringStringLinkedHashMap))
                 .collect(toList());
     }
 
@@ -350,8 +352,9 @@ public class BuildWithDetails extends Build {
         Map<String, Object> parameters = actions.stream()
                 .filter(item -> item.containsKey("parameters"))
                 .flatMap(item -> item.entrySet().stream())
-                .flatMap(sub -> sub.getValue().stream())
-                .collect(toMap(k -> (String) k.get("name"), v -> v.get("value")));
+                //.flatMap(sub -> sub.getValue().stream())
+                //.collect(toMap(k -> (String) k.get("name"), v -> v.get("value")));
+                .collect(toMap(k ->  k.getKey(), v -> v.getValue()));
 
         return parameters;
     }
