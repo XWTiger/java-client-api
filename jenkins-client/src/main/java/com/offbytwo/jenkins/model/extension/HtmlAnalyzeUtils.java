@@ -1,17 +1,24 @@
 package com.offbytwo.jenkins.model.extension;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+
+/**
+ * analyze html to obj
+ */
 public class HtmlAnalyzeUtils {
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     public static List<CredentialVO> parseCredentialHtml(String html) {
         if (StringUtils.isEmpty(html)) {
@@ -38,6 +45,61 @@ public class HtmlAnalyzeUtils {
                 list.add(credential);
             }
         });
+        return list;
+    }
+
+    public static CheckGitUrlDO parseHtmlToDo(String html) {
+        Document document = Jsoup.parse(html);
+        CheckGitUrlDO checkGitUrlDO = new CheckGitUrlDO();
+        Elements elements = document.getElementsByClass("error");
+        if (elements.size() <= 0) {
+            checkGitUrlDO.setStatus(true);
+        } else {
+            checkGitUrlDO.setStatus(false);
+            checkGitUrlDO.setMessage(elements.first().text());
+        }
+        return checkGitUrlDO;
+    }
+
+    public static List<JobFileDO> parseHtmlToJobFileDO(String html) {
+        List<JobFileDO> list = new ArrayList<>();
+        Document document = Jsoup.parse(html);
+        Elements elements = document.getElementsByClass("fileList");
+        //find the filelist table
+        Element element = elements.first();
+        //find all trs
+        Elements trs = element.getElementsByTag("tr");
+        if (CollectionUtils.isNotEmpty(trs)) {
+            trs.stream().forEach(tr -> {
+                Elements tdEles = tr.getElementsByTag("td");
+                Elements imgEle = tdEles.get(0).getElementsByTag("img");
+                //check img tag
+                if (imgEle.size() > 0) {
+                    Set<String> classNameList = imgEle.first().classNames();
+                    if (classNameList.contains("icon-folder")) {
+                        // directory
+                        JobFileDO jobFileDO = new JobFileDO();
+                        jobFileDO.setType(FileType.DIRECTORY);
+                        jobFileDO.setName(tdEles.get(1).text());
+                        list.add(jobFileDO);
+                    }
+                    if (classNameList.contains("icon-text")) {
+                        // file
+                        JobFileDO jobFileDO = new JobFileDO();
+                        jobFileDO.setType(FileType.FILE);
+                        jobFileDO.setName(tdEles.get(1).text());
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        try {
+                            jobFileDO.setCreateTime(sdf.parse(tdEles.get(2).text()));
+                        } catch (ParseException e) {
+                            System.out.println("time parse failed: " + e);
+                        }
+                        jobFileDO.setFileSize(tdEles.get(3).text());
+                        list.add(jobFileDO);
+                    }
+                }
+            });
+        }
         return list;
     }
 }
