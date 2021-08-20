@@ -88,12 +88,7 @@ public class HtmlAnalyzeUtils {
                         JobFileDO jobFileDO = new JobFileDO();
                         jobFileDO.setType(FileType.FILE);
                         jobFileDO.setName(tdEles.get(1).text());
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        try {
-                            jobFileDO.setCreateTime(sdf.parse(tdEles.get(2).text()));
-                        } catch (ParseException e) {
-                            System.out.println("time parse failed: " + e);
-                        }
+                        jobFileDO.setCreateTime(tdEles.get(2).text());
                         jobFileDO.setFileSize(tdEles.get(3).text());
                         list.add(jobFileDO);
                     }

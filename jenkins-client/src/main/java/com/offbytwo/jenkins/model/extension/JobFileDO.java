@@ -13,9 +13,9 @@ public class JobFileDO {
 
     private String fileSize;
 
-    private Date createTime;
+    private String createTime;
 
-    public JobFileDO(String name, FileType type, String fileSize, Date createTime) {
+    public JobFileDO(String name, FileType type, String fileSize, String createTime) {
         this.name = name;
         this.type = type;
         this.fileSize = fileSize;
@@ -50,11 +50,11 @@ public class JobFileDO {
         this.fileSize = fileSize;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }
