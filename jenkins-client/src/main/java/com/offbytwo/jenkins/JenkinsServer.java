@@ -1228,5 +1228,13 @@ public class JenkinsServer implements Closeable {
     }
 
 
+    public void cleanWorkSpace(String jobName) throws IOException {
+        HttpResponse response = client.post_form_with_result("/job/" + jobName + "/doWipeOutWorkspace", null, false);
+        if (response.getStatusLine().getStatusCode() == 302 ) {
+            LOGGER.info("===== delete ws success ====");
+        }
+    }
+
+
 
 }

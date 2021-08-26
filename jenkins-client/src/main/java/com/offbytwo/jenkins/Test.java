@@ -1,5 +1,6 @@
 package com.offbytwo.jenkins;
 
+import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.extension.CheckGitUrlDO;
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import org.apache.commons.collections.CollectionUtils;
@@ -56,6 +57,8 @@ public class Test {
 
         try {
             JenkinsServer jenkinsServer = new JenkinsServer(new URI("http://172.22.1.7:8889", "admin", "Jenkins@12345"));
+
+            JobWithDetails job = jenkinsServer.getJob("test222-6fee4dfc");
 
             //CheckGitUrlDO checkGitUrlDO = jenkinsServer.checkGitUrl("https://172.22.5.3/full-stack-cloud/sugoncloud-cci.git", "8fe84b27-d0a1-4572-be11-7381c307c325", "blank");
             String result = jenkinsServer.checkSshServer("tiggerrr-ddssss", "172.22.1.9", "root", "22", "/root", "admin1234@sugon");
