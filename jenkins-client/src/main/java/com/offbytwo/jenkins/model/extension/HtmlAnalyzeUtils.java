@@ -9,8 +9,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -96,5 +94,19 @@ public class HtmlAnalyzeUtils {
             });
         }
         return list;
+    }
+
+    public SshServerTestDO parseTestConnectionSsh(String html) {
+        Document document = Jsoup.parse(html);
+        SshServerTestDO sshServerTestDO = new SshServerTestDO();
+        Elements elements = document.getElementsByClass("ok");
+        if (elements.size() > 0) {
+            sshServerTestDO.setSuccess(true);
+        } else {
+            sshServerTestDO.setSuccess(false);
+            LOGGER.error("test connection failed", html);
+            sshServerTestDO.setMsg(html);
+        }
+        return sshServerTestDO;
     }
 }

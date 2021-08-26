@@ -1,5 +1,6 @@
 package com.offbytwo.jenkins;
 
+import com.offbytwo.jenkins.model.extension.CheckGitUrlDO;
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import org.apache.commons.collections.CollectionUtils;
 import org.dom4j.DocumentException;
@@ -15,6 +16,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -51,24 +54,16 @@ public class Test {
     public static void main(String[] args) {
 
 
+        try {
+            JenkinsServer jenkinsServer = new JenkinsServer(new URI("http://172.22.1.7:8889", "admin", "Jenkins@12345"));
 
-        Document document = Jsoup.parse(getStringStream("ss"));
-        Elements elements = document.getElementsByClass("sortable pane bigtable");
-        //useful table
-        Element element = elements.first();
-        Elements trs = element.getElementsByTag("tr");
-        trs.stream().forEach(tr -> {
-            Elements tds = tr.getElementsByTag("td");
-            if (Objects.nonNull(tds) && tds.size() > 0) {
-                System.out.println("=====================");
-                System.out.println(tds.get(1).text());
-                System.out.println(tds.get(2).text());
-                System.out.println(tds.get(3).text());
-                System.out.println(tds.get(4).text());
-                System.out.println("=====================");
-                System.out.println("");
-            }
-        });
+            //CheckGitUrlDO checkGitUrlDO = jenkinsServer.checkGitUrl("https://172.22.5.3/full-stack-cloud/sugoncloud-cci.git", "8fe84b27-d0a1-4572-be11-7381c307c325", "blank");
+            String result = jenkinsServer.checkSshServer("tiggerrr-ddssss", "172.22.1.9", "root", "22", "/root", "admin1234@sugon");
+            System.out.println("===========>" + result);
+            //System.out.println(checkGitUrlDO.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

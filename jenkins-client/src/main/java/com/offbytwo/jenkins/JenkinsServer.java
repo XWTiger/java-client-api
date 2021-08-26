@@ -6,17 +6,15 @@
 
 package com.offbytwo.jenkins;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.*;
-
-import javax.xml.bind.JAXBException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.offbytwo.jenkins.client.JenkinsHttpClient;
+import com.offbytwo.jenkins.client.JenkinsHttpConnection;
+import com.offbytwo.jenkins.client.util.EncodingUtils;
+import com.offbytwo.jenkins.client.util.UrlUtils;
+import com.offbytwo.jenkins.helper.JenkinsVersion;
+import com.offbytwo.jenkins.model.Queue;
+import com.offbytwo.jenkins.model.*;
 import com.offbytwo.jenkins.model.extension.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -28,27 +26,11 @@ import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.offbytwo.jenkins.client.JenkinsHttpClient;
-import com.offbytwo.jenkins.client.JenkinsHttpConnection;
-import com.offbytwo.jenkins.client.util.EncodingUtils;
-import com.offbytwo.jenkins.client.util.UrlUtils;
-import com.offbytwo.jenkins.helper.JenkinsVersion;
-import com.offbytwo.jenkins.model.Build;
-import com.offbytwo.jenkins.model.Computer;
-import com.offbytwo.jenkins.model.ComputerSet;
-import com.offbytwo.jenkins.model.FolderJob;
-import com.offbytwo.jenkins.model.Job;
-import com.offbytwo.jenkins.model.JobConfiguration;
-import com.offbytwo.jenkins.model.JobWithDetails;
-import com.offbytwo.jenkins.model.LabelWithDetails;
-import com.offbytwo.jenkins.model.MainView;
-import com.offbytwo.jenkins.model.MavenJobWithDetails;
-import com.offbytwo.jenkins.model.PluginManager;
-import com.offbytwo.jenkins.model.Queue;
-import com.offbytwo.jenkins.model.QueueItem;
-import com.offbytwo.jenkins.model.QueueReference;
-import com.offbytwo.jenkins.model.View;
+import javax.xml.bind.JAXBException;
 import java.io.Closeable;
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -1156,6 +1138,91 @@ public class JenkinsServer implements Closeable {
             return HtmlAnalyzeUtils.parseHtmlToDo(result);
         } else {
             LOGGER.warn("call jenkins  check url api failed");
+        }
+        return null;
+    }
+
+
+    /**
+     * name: tiggerrr-ddssss
+     * hostname: 172.22.1.9
+     * username: root
+     * encryptedPassword: {AQAAABAAAAAQcuuo6i8FFp+q55XBfiySxjvDNuLQ7JOW2SPJ98oI1VM=}
+     * remoteRootDir: /root
+     * jumpHost:
+     * port: 22
+     * timeout: 300000
+     * keyPath:
+     * key:
+     * overrideKey: true
+     * common.encryptedPassphrase: {AQAAABAAAAAQn1g0Xkm2p/yVyQci4hKvSGmcMWNBnCKfn007lNNMn/E=}
+     * common.key:
+     * common.keyPath:
+     * proxyType:
+     * proxyHost:
+     * proxyPort: 0
+     * proxyUser:
+     * proxyPassword:
+    * */
+    public String checkSshServer(String name, String hostName, String userName, String port, String remoteRootDir, String encryptedPassword) {
+        NameValuePair basicNameValuePair = new BasicNameValuePair("name", name);
+        NameValuePair hostnamePair = new BasicNameValuePair("hostname", hostName);
+        NameValuePair userNameValuePair = new BasicNameValuePair("username", userName);
+        NameValuePair encryptedPasswordPair = new BasicNameValuePair("encryptedPassword", encryptedPassword);
+        NameValuePair remoteRootDirPair = new BasicNameValuePair("remoteRootDir", remoteRootDir);
+       /* NameValuePair jumpHost = new BasicNameValuePair("jumpHost", "");*/
+        NameValuePair portPair = new BasicNameValuePair("port", port);
+        NameValuePair timeout = new BasicNameValuePair("timeout", "300000");
+       /* NameValuePair keyPath = new BasicNameValuePair("keyPath", "");
+        NameValuePair key = new BasicNameValuePair("key", "");*/
+        NameValuePair overrideKey = new BasicNameValuePair("overrideKey", "true");
+       /* NameValuePair encryptedPassphrase = new BasicNameValuePair("common.encryptedPassphrase", "{AQAAABAAAAAQn1g0Xkm2p/yVyQci4hKvSGmcMWNBnCKfn007lNNMn/E=}");
+        NameValuePair keyPair = new BasicNameValuePair("common.key", "");
+        NameValuePair keyPathPar = new BasicNameValuePair("common.keyPath", "");
+        NameValuePair proxyType = new BasicNameValuePair("proxyType", "");
+        NameValuePair proxyHost = new BasicNameValuePair("proxyHost", "");
+        NameValuePair proxyPort = new BasicNameValuePair("proxyPort", "");
+        NameValuePair proxyUser = new BasicNameValuePair("proxyUser", "");
+        NameValuePair proxyPassword = new BasicNameValuePair("proxyPassword", "");*/
+
+
+
+        List<NameValuePair> keyValue = new ArrayList<>();
+        keyValue.add(basicNameValuePair);
+        keyValue.add(hostnamePair);
+        keyValue.add(userNameValuePair);
+        keyValue.add(encryptedPasswordPair);
+        keyValue.add(remoteRootDirPair);
+       /* keyValue.add(jumpHost);*/
+        keyValue.add(portPair);
+        keyValue.add(timeout);
+      /*  keyValue.add(keyPath);
+        keyValue.add(key);*/
+        keyValue.add(overrideKey);
+       /* keyValue.add(encryptedPassphrase);
+        keyValue.add(keyPair);
+        keyValue.add(keyPathPar);
+        keyValue.add(proxyHost);
+        keyValue.add(proxyPort);
+        keyValue.add(proxyType);
+        keyValue.add(proxyUser);
+        keyValue.add(proxyPassword);*/
+
+
+
+        HttpResponse response = null;
+        try {
+            response = client.post_form_with_result("/descriptorByName/jenkins.plugins.publish_over_ssh.BapSshHostConfiguration/testConnection", keyValue, false);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                String result = EntityUtils.toString(response.getEntity());
+                return result;
+            } else {
+                LOGGER.warn("check ssh server failed");
+                String result = EntityUtils.toString(response.getEntity());
+                return result;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
