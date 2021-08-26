@@ -96,7 +96,7 @@ public class HtmlAnalyzeUtils {
         return list;
     }
 
-    public SshServerTestDO parseTestConnectionSsh(String html) {
+    public static  SshServerTestDO parseTestConnectionSsh(String html) {
         Document document = Jsoup.parse(html);
         SshServerTestDO sshServerTestDO = new SshServerTestDO();
         Elements elements = document.getElementsByClass("ok");
@@ -104,7 +104,7 @@ public class HtmlAnalyzeUtils {
             sshServerTestDO.setSuccess(true);
         } else {
             sshServerTestDO.setSuccess(false);
-            LOGGER.error("test connection failed", html);
+            System.out.println("test connection failed: " + html);
             sshServerTestDO.setMsg(html);
         }
         return sshServerTestDO;
