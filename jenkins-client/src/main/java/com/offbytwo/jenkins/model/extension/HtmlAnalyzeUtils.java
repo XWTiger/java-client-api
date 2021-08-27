@@ -105,7 +105,10 @@ public class HtmlAnalyzeUtils {
         } else {
             sshServerTestDO.setSuccess(false);
             System.out.println("test connection failed: " + html);
-            sshServerTestDO.setMsg(html);
+            Elements elementsError = document.getElementsByClass("error");
+            if (elementsError.size() > 0) {
+                sshServerTestDO.setMsg(elementsError.get(0).getElementsByTag("pre").text());
+            }
         }
         return sshServerTestDO;
     }
