@@ -77,7 +77,6 @@ public class Job extends BaseModel {
 
             return result.toString("UTF-8");
         } finally {
-            this.client.close();
             result.close();
         }
     }
