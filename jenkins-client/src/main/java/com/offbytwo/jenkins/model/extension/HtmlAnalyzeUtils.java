@@ -61,6 +61,9 @@ public class HtmlAnalyzeUtils {
 
     public static List<JobFileDO> parseHtmlToJobFileDO(String html) {
         List<JobFileDO> list = new ArrayList<>();
+        if (StringUtils.isEmpty(html)) {
+            return Collections.emptyList();
+        }
         Document document = Jsoup.parse(html);
         Elements elements = document.getElementsByClass("fileList");
         if (elements.size() <= 0) {
