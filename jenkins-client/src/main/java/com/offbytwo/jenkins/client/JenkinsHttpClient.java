@@ -204,7 +204,6 @@ public class JenkinsHttpClient implements JenkinsHttpConnection {
             response = client.execute(getMethod, localContext);
             jenkinsVersion = ResponseUtils.getJenkinsVersion(response);
             httpResponseValidator.validateResponse(response);
-            LOGGER.info("get file ========>{}", response.getEntity().getContent());
             return new RequestReleasingInputStream(response.getEntity().getContent(), getMethod);
         } finally {
             response.close();
