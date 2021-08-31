@@ -65,7 +65,7 @@ public class Job extends BaseModel {
      * @throws IOException in case of an error.
      */
     public String getFileFromWorkspace(String fileName) throws IOException {
-        InputStream is = client.getFile(URI.create(url + "/ws/" + fileName));
+        InputStream is = client.getFile(URI.create(url + "ws/" + fileName));
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             byte[] buffer = new byte[1024];
@@ -77,6 +77,7 @@ public class Job extends BaseModel {
 
             return result.toString("UTF-8");
         } finally {
+            this.client.close();
             result.close();
         }
     }

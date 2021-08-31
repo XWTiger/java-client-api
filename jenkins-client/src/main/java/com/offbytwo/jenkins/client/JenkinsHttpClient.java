@@ -24,6 +24,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -197,11 +198,18 @@ public class JenkinsHttpClient implements JenkinsHttpConnection {
      */
     @Override
     public InputStream getFile(URI path) throws IOException {
-        HttpGet getMethod = new HttpGet(path);
-        HttpResponse response = client.execute(getMethod, localContext);
-        jenkinsVersion = ResponseUtils.getJenkinsVersion(response);
-        httpResponseValidator.validateResponse(response);
-        return new RequestReleasingInputStream(response.getEntity().getContent(), getMethod);
+        CloseableHttpResponse response = null;
+        try {
+            HttpGet getMethod = new HttpGet(path);
+            response = client.execute(getMethod, localContext);
+            jenkinsVersion = ResponseUtils.getJenkinsVersion(response);
+            httpResponseValidator.validateResponse(response);
+            LOGGER.info("get file ========>{}", response.getEntity().getContent());
+            return new RequestReleasingInputStream(response.getEntity().getContent(), getMethod);
+        } finally {
+            response.close();
+        }
+
     }
 
     /**
