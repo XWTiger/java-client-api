@@ -63,8 +63,12 @@ public class HtmlAnalyzeUtils {
         List<JobFileDO> list = new ArrayList<>();
         Document document = Jsoup.parse(html);
         Elements elements = document.getElementsByClass("fileList");
+        if (elements.size() <= 0) {
+            return Collections.emptyList();
+        }
         //find the filelist table
         Element element = elements.first();
+
         //find all trs
         Elements trs = element.getElementsByTag("tr");
         if (CollectionUtils.isNotEmpty(trs)) {
