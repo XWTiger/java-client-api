@@ -23,11 +23,13 @@ import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.config.ConnectionConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -100,7 +102,21 @@ public class JenkinsHttpClient implements JenkinsHttpConnection {
      * @param builder Configured HttpClientBuilder to be used
      */
     public JenkinsHttpClient(URI uri, HttpClientBuilder builder) {
-        this(uri, builder.build());
+        this(uri, initTimeOut(builder));
+    }
+
+    protected static CloseableHttpClient initTimeOut(HttpClientBuilder builder) {
+        RequestConfig requestConfig = RequestConfig.custom()
+                //从连接池中获取连接的超时时间
+                .setConnectionRequestTimeout(6000)
+                //与服务器连接超时时间：httpclient会创建一个异步线程用以创建socket连接，
+                //此处设置该socket的连接超时时间
+                .setConnectTimeout(6000)
+                //socket读数据超时时间：从服务器获取响应数据的超时时间
+                .setSocketTimeout(6000)
+                .build();
+        CloseableHttpClient httpClient = builder.setMaxConnTotal(50).setMaxConnPerRoute(1000).setDefaultRequestConfig(requestConfig).build();
+        return httpClient;
     }
 
     /**
@@ -199,15 +215,13 @@ public class JenkinsHttpClient implements JenkinsHttpConnection {
     @Override
     public InputStream getFile(URI path) throws IOException {
         CloseableHttpResponse response = null;
-        try {
-            HttpGet getMethod = new HttpGet(path);
-            response = client.execute(getMethod, localContext);
-            jenkinsVersion = ResponseUtils.getJenkinsVersion(response);
-            httpResponseValidator.validateResponse(response);
-            return new RequestReleasingInputStream(response.getEntity().getContent(), getMethod);
-        } finally {
-            response.close();
-        }
+
+        HttpGet getMethod = new HttpGet(path);
+        response = client.execute(getMethod, localContext);
+        jenkinsVersion = ResponseUtils.getJenkinsVersion(response);
+        httpResponseValidator.validateResponse(response);
+        return new RequestReleasingInputStream(response.getEntity().getContent(), getMethod);
+
 
     }
 
