@@ -81,6 +81,20 @@ public class Job extends BaseModel {
         }
     }
 
+    public ByteArrayOutputStream getFileStreamFromWorkspace(String fileName) throws IOException {
+        InputStream is = client.getFile(URI.create(url + "ws/" + fileName));
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            is.close();
+
+            return result;
+    }
+
     /**
      * Trigger a build without parameters
      * 
