@@ -6,7 +6,7 @@
 [![Javadocs](https://javadoc.io/badge/com.offbytwo.jenkins/jenkins-client.svg?color=blue)](https://javadoc.io/doc/com.offbytwo.jenkins/jenkins-client)
 
 ## something fix and new feature at extension branch
-> + add html covert java obj utils
+> + add utils for html covert ot java object 
 > + suport credentials
 > + suport system settings
 > + suport ssh sever
