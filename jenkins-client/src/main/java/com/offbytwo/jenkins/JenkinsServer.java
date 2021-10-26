@@ -15,6 +15,7 @@ import com.offbytwo.jenkins.helper.JenkinsVersion;
 import com.offbytwo.jenkins.model.Queue;
 import com.offbytwo.jenkins.model.*;
 import com.offbytwo.jenkins.model.extension.*;
+import net.sf.json.JSONObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -1119,6 +1120,9 @@ public class JenkinsServer implements Closeable {
         HttpResponse response = client.post_form_with_result("/configSubmit", keyValue, false);
         if (200 == response.getStatusLine().getStatusCode()) {
             LOGGER.info("=========update system settings success ========");
+        } else {
+            ObjectMapper objectMapper = new ObjectMapper();
+            LOGGER.error("response =============>{}", objectMapper.writeValueAsString(response.getEntity()));
         }
         return this;
     }
