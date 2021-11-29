@@ -1118,7 +1118,7 @@ public class JenkinsServer implements Closeable {
         keyValue.add(svnNameValuePair);
 
         HttpResponse response = client.post_form_with_result("/configSubmit", keyValue, false);
-        if (200 == response.getStatusLine().getStatusCode()) {
+        if (response.getStatusLine().getStatusCode() < 400) {
             LOGGER.info("=========update system settings success ========");
         } else {
             ObjectMapper objectMapper = new ObjectMapper();
